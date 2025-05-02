@@ -1,4 +1,4 @@
-module github.com/ayayaakasvin/gen-project
+module github.com/ayayaakasvin/proj-gen
 
 go 1.24.2
 

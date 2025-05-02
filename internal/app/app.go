@@ -4,19 +4,18 @@ import (
 	"flag"
 	"os"
 
-	"github.com/ayayaakasvin/gen-project/internal/generate"
-	"github.com/ayayaakasvin/gen-project/internal/options"
+	"github.com/ayayaakasvin/proj-gen/internal/generate"
+	"github.com/ayayaakasvin/proj-gen/internal/options"
 	"github.com/sirupsen/logrus"
 )
 
-func App (logger *logrus.Logger) {
+func App(logger *logrus.Logger) {
 	opts, afterParse := options.ParseFlags()
 
 	logger.Info("Parsing flags")
 	flag.Parse()
 	afterParse(opts)
 	logger.Info(opts.String())
-
 
 	logger.Info("Generating project")
 	generate.GenerateProject(opts, logger)

@@ -6,24 +6,24 @@ import (
 	"os/exec"
 	"path"
 
-	"github.com/ayayaakasvin/gen-project/internal/lib/prompt"
-	"github.com/ayayaakasvin/gen-project/internal/options"
-	"github.com/ayayaakasvin/gen-project/templates"
+	"github.com/ayayaakasvin/proj-gen/internal/lib/prompt"
+	"github.com/ayayaakasvin/proj-gen/internal/options"
+	"github.com/ayayaakasvin/proj-gen/templates"
 	"github.com/sirupsen/logrus"
 )
 
 var overwrite bool
 
 type Generator struct {
-	opts *options.ProjectOptions
+	opts   *options.ProjectOptions
 	logger *logrus.Logger
 }
 
-type GenerateFunc func () error
+type GenerateFunc func() error
 
-func GenerateProject (opts *options.ProjectOptions, logger *logrus.Logger) {
+func GenerateProject(opts *options.ProjectOptions, logger *logrus.Logger) {
 	g := &Generator{
-		opts: opts,
+		opts:   opts,
 		logger: logger,
 	}
 
@@ -33,7 +33,7 @@ func GenerateProject (opts *options.ProjectOptions, logger *logrus.Logger) {
 	}
 }
 
-func (g *Generator) Generate () error {
+func (g *Generator) Generate() error {
 	funcSlice := []GenerateFunc{
 		g.GenerateGoMod,
 		g.GenerateMain,
@@ -51,14 +51,14 @@ func (g *Generator) Generate () error {
 	return nil
 }
 
-func (g *Generator) GenerateGoMod () error {
+func (g *Generator) GenerateGoMod() error {
 	g.logger.Info("Generating go.mod")
 
 	pathToProject := path.Join(g.opts.Path, g.opts.Name)
 
 	if _, err := os.Stat(pathToProject); !os.IsNotExist(err) {
 		g.logger.Warn("Project already exists")
-		if (!prompt.AskForOverwrite()) {
+		if !prompt.AskForOverwrite() {
 			g.logger.Info("Exiting application")
 			os.Exit(0)
 		} else {
@@ -97,7 +97,7 @@ func (g *Generator) GenerateGoMod () error {
 	return nil
 }
 
-func (g *Generator) GenerateMain () error {
+func (g *Generator) GenerateMain() error {
 	g.logger.Info("Generating main.go")
 
 	pathToProject := path.Join(g.opts.Path, g.opts.Name)
@@ -123,7 +123,7 @@ func (g *Generator) GenerateMain () error {
 	return nil
 }
 
-func (g *Generator) GenerateConfig () error {
+func (g *Generator) GenerateConfig() error {
 	if !g.opts.WithConfig {
 		return nil
 	}
@@ -178,7 +178,7 @@ func (g *Generator) GenerateConfig () error {
 	return nil
 }
 
-func FallBack (pathToProject string) {
+func FallBack(pathToProject string) {
 	if !overwrite {
 		err := os.RemoveAll(pathToProject)
 		if err != nil {
@@ -190,7 +190,7 @@ func FallBack (pathToProject string) {
 	os.Exit(1)
 }
 
-func (g *Generator) RunGoModTidy () error {
+func (g *Generator) RunGoModTidy() error {
 	if !g.opts.RunTidy {
 		return nil
 	}
@@ -201,7 +201,7 @@ func (g *Generator) RunGoModTidy () error {
 
 	cmd := exec.Command("go", "mod", "tidy")
 	cmd.Dir = pathToProject
-	
+
 	err := cmd.Run()
 	if err != nil {
 		fmt.Println("Error running go mod tidy: ", err)
