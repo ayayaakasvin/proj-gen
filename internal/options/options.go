@@ -15,6 +15,8 @@ type ProjectOptions struct {
 	RunTidy    bool
 	GoVersion  string
 	Path       string
+	RunGitInit bool
+	WithDocker bool
 }
 
 // AfterParseFunc is a function type that takes a pointer to ProjectOptions
@@ -32,6 +34,14 @@ func ParseFlags() (*ProjectOptions, AfterParseFunc) {
 	flag.BoolVar(runTidy, "tidy", false, "Run go mod tidy")
 	flag.BoolVar(runTidy, "t", false, "Alias for --tidy")
 
+	var runGitInit *bool = new(bool)
+	flag.BoolVar(runGitInit, "git", false, "Run git init")
+	flag.BoolVar(runGitInit, "g", false, "Alias for --git")
+
+	var withDocker *bool = new(bool)
+	flag.BoolVar(withDocker, "docker", false, "Include Dockerfile")
+	flag.BoolVar(withDocker, "d", false, "Alias for --docker")
+
 	goVersion := flag.String("go-version", "", "Go version to use(default: build version)")
 	path := flag.String("path", "./", "Path to create the project (default: current directory)")
 
@@ -44,6 +54,8 @@ func ParseFlags() (*ProjectOptions, AfterParseFunc) {
 		o.GoVersion = *goVersion
 		o.Path = *path
 		o.RunTidy = *runTidy
+		o.RunGitInit = *runGitInit
+		o.WithDocker = *withDocker
 
 		if o.Name == "" {
 			flag.Usage()
